@@ -56,6 +56,9 @@ unsigned int buildingTexture;
 unsigned int liftTexture;
 unsigned int fanTexture; 
 
+unsigned int personTexture;
+int personImgWidth, personImgHeight;
+
 // --- POMOCNE FUNKCIJE ---
 // 
 // Vraca X koordinatu gde lift vizuelno pocinje (za detekciju ulaska)
@@ -166,6 +169,7 @@ unsigned int createShader(const char* vertexPath, const char* fragmentPath) {
 }
 
 // --- VECTOR FONT ---
+// --- VECTOR FONT ---
 void appendChar(std::vector<float>& vertices, char c, float x, float y, float s) {
     auto addLine = [&](float x1, float y1, float x2, float y2) {
         vertices.push_back(x + x1 * s); vertices.push_back(y + y1 * s);
@@ -179,17 +183,31 @@ void appendChar(std::vector<float>& vertices, char c, float x, float y, float s)
     case '4': addLine(0, 2, 0, 1); addLine(0, 1, 1, 1); addLine(1, 0, 1, 2); break;
     case '5': addLine(1, 2, 0, 2); addLine(0, 2, 0, 1); addLine(0, 1, 1, 1); addLine(1, 1, 1, 0); addLine(1, 0, 0, 0); break;
     case '6': addLine(1, 2, 0, 2); addLine(0, 2, 0, 0); addLine(0, 0, 1, 0); addLine(1, 0, 1, 1); addLine(1, 1, 0, 1); break;
-    case 'S': addLine(1, 2, 0, 2); addLine(0, 2, 0, 1); addLine(0, 1, 1, 1); addLine(1, 1, 1, 0); addLine(1, 0, 0, 0); break;
-    case 'U': addLine(0, 2, 0, 0); addLine(0, 0, 1, 0); addLine(1, 0, 1, 2); break;
-    case 'P': addLine(0, 0, 0, 2); addLine(0, 2, 1, 2); addLine(1, 2, 1, 1); addLine(1, 1, 0, 1); break;
-    case 'R': addLine(0, 0, 0, 2); addLine(0, 2, 1, 2); addLine(1, 2, 1, 1); addLine(0, 1, 1, 0); break;
-    case 'O': addLine(0, 0, 1, 0); addLine(1, 0, 1, 2); addLine(1, 2, 0, 2); addLine(0, 2, 0, 0); break;
-    case 'T': addLine(0.5, 0, 0.5, 2); addLine(0, 2, 1, 2); break;
-    case 'V': addLine(0, 2, 0.5, 0); addLine(0.5, 0, 1, 2); break;
-    case 'E': addLine(1, 0, 0, 0); addLine(0, 0, 0, 2); addLine(0, 2, 1, 2); addLine(0, 1, 1, 1); break;
-    case 'N': addLine(0, 0, 0, 2); addLine(0, 2, 1, 0); addLine(1, 0, 1, 2); break;
-    case 'Z': addLine(0, 2, 1, 2); addLine(1, 2, 0, 0); addLine(0, 0, 1, 0); break;
+    case '7': addLine(0, 2, 1, 2); addLine(1, 2, 0.5, 0); break; // Dodata 7 za svaki slucaj
+    case '8': addLine(0, 0, 1, 0); addLine(1, 0, 1, 2); addLine(1, 2, 0, 2); addLine(0, 2, 0, 0); addLine(0, 1, 1, 1); break; // Dodata 8
+
+        // SLOVA
     case 'A': addLine(0, 0, 0, 2); addLine(0, 2, 1, 2); addLine(1, 2, 1, 0); addLine(0, 1, 1, 1); break;
+    case 'B': addLine(0, 0, 0, 2); addLine(0, 2, 0.8, 2); addLine(0.8, 2, 1, 1.5); addLine(1, 1.5, 0.8, 1); addLine(0.8, 1, 0, 1); addLine(0.8, 1, 1, 0.5); addLine(1, 0.5, 0.8, 0); addLine(0.8, 0, 0, 0); break;
+    case 'C': addLine(1, 2, 0, 2); addLine(0, 2, 0, 0); addLine(0, 0, 1, 0); break; // <--- NOVO
+    case 'D': addLine(0, 0, 0, 2); addLine(0, 2, 0.6, 2); addLine(0.6, 2, 1, 1); addLine(1, 1, 0.6, 0); addLine(0.6, 0, 0, 0); break; // <--- NOVO
+    case 'E': addLine(1, 0, 0, 0); addLine(0, 0, 0, 2); addLine(0, 2, 1, 2); addLine(0, 1, 1, 1); break;
+    case 'F': addLine(0, 0, 0, 2); addLine(0, 2, 1, 2); addLine(0, 1, 1, 1); break;
+    case 'G': addLine(1, 2, 0, 2); addLine(0, 2, 0, 0); addLine(0, 0, 1, 0); addLine(1, 0, 1, 1); break;
+    case 'I': addLine(0.5, 0, 0.5, 2); addLine(0, 0, 1, 0); addLine(0, 2, 1, 2); break; // <--- NOVO
+    case 'L': addLine(0, 2, 0, 0); addLine(0, 0, 1, 0); break;
+    case 'M': addLine(0, 0, 0, 2); addLine(0, 2, 0.5, 1); addLine(0.5, 1, 1, 2); addLine(1, 2, 1, 0); break;
+    case 'N': addLine(0, 0, 0, 2); addLine(0, 2, 1, 0); addLine(1, 0, 1, 2); break;
+    case 'O': addLine(0, 0, 1, 0); addLine(1, 0, 1, 2); addLine(1, 2, 0, 2); addLine(0, 2, 0, 0); break;
+    case 'P': addLine(0, 0, 0, 2); addLine(0, 2, 1, 2); addLine(1, 2, 1, 1); addLine(1, 1, 0, 1); break;
+    case 'R': addLine(0, 0, 0, 2); addLine(0, 2, 1, 2); addLine(1, 2, 1, 1); addLine(0, 1, 1, 0); addLine(0.5, 1, 1, 0); break; // Popravljeno R
+    case 'S': addLine(1, 2, 0, 2); addLine(0, 2, 0, 1); addLine(0, 1, 1, 1); addLine(1, 1, 1, 0); addLine(1, 0, 0, 0); break;
+    case 'T': addLine(0.5, 0, 0.5, 2); addLine(0, 2, 1, 2); break;
+    case 'U': addLine(0, 2, 0, 0); addLine(0, 0, 1, 0); addLine(1, 0, 1, 2); break;
+    case 'V': addLine(0, 2, 0.5, 0); addLine(0.5, 0, 1, 2); break;
+    case 'Z': addLine(0, 2, 1, 2); addLine(1, 2, 0, 0); addLine(0, 0, 1, 0); break;
+    case '/': addLine(0, 0, 1, 2); break; // <--- NOVO (Kosa crta)
+    case ' ': break; // Razmak (nista ne crtamo)
     }
 }
 
@@ -242,41 +260,106 @@ void initLogic() {
     if (firstRun) {
         float floorHeight = WINDOW_HEIGHT / 8.0f;
 
-        // Zadatak: "Lift se na poèetku nalazi na prvom spratu." -> Index 2 (SU=0, PR=1, 1=2)
         currentFloor = 2;
         liftY = 2 * floorHeight;
-
-        // Zadatak: "Osoba se na poèetku nalazi u prizemlju, van lifta." -> Index 1
         personY = 1 * floorHeight;
-        personX = PANEL_WIDTH + 50; // Malo desno od panela
-        personInLift = false;
 
+        // IZMJENA: Racunamo gde pocinje zgrada (30% sirine s desna)
+        float buildingWidth = WINDOW_WIDTH * 0.3f;
+        float buildingStart = WINDOW_WIDTH - buildingWidth;
+
+        personX = buildingStart; // <--- Krece tacno od leve ivice zgrade
+
+        personInLift = false;
         firstRun = false;
     }
     MAX_DOOR_HEIGHT = (WINDOW_HEIGHT / 8.0f) * 0.9f;
 }
 
+//void checkRequests() {
+//    if (liftState != IDLE) return;
+//    int target = -1;
+//    int minDistance = 100;
+//
+//    // Trazimo najblizi sprat koji je pozvan
+//    for (int i = 0; i < 8; i++) {
+//        if (floorRequests[i]) {
+//            int dist = abs(i - currentFloor);
+//            if (dist < minDistance) { minDistance = dist; target = i; }
+//        }
+//    }
+//
+//    if (target != -1) {
+//        if (target > currentFloor) liftState = MOVING_UP;
+//        else if (target < currentFloor) liftState = MOVING_DOWN;
+//        else {
+//            // Ako smo vec tu, otvori vrata
+//            floorRequests[target] = false;
+//            liftState = DOOR_OPENING;
+//            if (ventilationOn) ventilationOn = false;
+//        }
+//    }
+//}
+
 void checkRequests() {
     if (liftState != IDLE) return;
-    int target = -1;
-    int minDistance = 100;
 
-    // Trazimo najblizi sprat koji je pozvan
-    for (int i = 0; i < 8; i++) {
-        if (floorRequests[i]) {
-            int dist = abs(i - currentFloor);
-            if (dist < minDistance) { minDistance = dist; target = i; }
-        }
+    // Pamtimo smer kretanja: 1 = GORE, -1 = DOLE
+    // "static" znaci da ova promenljiva cuva vrednost izmedju poziva funkcije
+    static int lastDirection = 1;
+
+    // --- 1. PROVERA: Da li je pozvan na TRENUTNOM spratu? ---
+    if (floorRequests[currentFloor]) {
+        floorRequests[currentFloor] = false;
+        liftState = DOOR_OPENING;
+        if (ventilationOn) ventilationOn = false;
+        return;
     }
 
-    if (target != -1) {
-        if (target > currentFloor) liftState = MOVING_UP;
-        else if (target < currentFloor) liftState = MOVING_DOWN;
-        else {
-            // Ako smo vec tu, otvori vrata
-            floorRequests[target] = false;
-            liftState = DOOR_OPENING;
-            if (ventilationOn) ventilationOn = false;
+    // --- 2. LOGIKA KRETANJA (SCAN ALGORITAM) ---
+
+    bool requestFound = false;
+
+    // A) Ako smo isli GORE (ili stojimo), prvo gledamo ima li sta IZNAD
+    if (lastDirection == 1) {
+        for (int i = currentFloor + 1; i < 8; i++) {
+            if (floorRequests[i]) {
+                liftState = MOVING_UP;
+                requestFound = true;
+                return; // Nastavljamo gore
+            }
+        }
+
+        // Ako nema nista gore, trazimo ima li sta DOLE
+        if (!requestFound) {
+            for (int i = currentFloor - 1; i >= 0; i--) {
+                if (floorRequests[i]) {
+                    liftState = MOVING_DOWN;
+                    lastDirection = -1; // Menjamo smer pamcenja u DOLE
+                    return;
+                }
+            }
+        }
+    }
+    // B) Ako smo isli DOLE, prvo gledamo ima li sta ISPOD
+    else {
+        for (int i = currentFloor - 1; i >= 0; i--) {
+            if (floorRequests[i]) {
+                liftState = MOVING_DOWN;
+                requestFound = true;
+                return; // Nastavljamo dole
+            }
+        }
+
+        // Ako nema nista dole, trazimo ima li sta GORE
+        if (!requestFound) {
+            for (int i = currentFloor + 1; i < 8; i++) {
+                if (floorRequests[i]) {
+                    liftState = MOVING_UP;
+                    lastDirection = 1; // Menjamo smer pamcenja u GORE
+                    return;
+                }
+            }
         }
     }
 }
@@ -360,7 +443,12 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         if (!personInLift) {
             if (key == GLFW_KEY_A) { // Levo
                 personX -= moveSpeed;
-                if (personX < PANEL_WIDTH) personX = PANEL_WIDTH;
+
+                // IZMJENA: Racunamo granicu zgrade
+                float buildingStart = WINDOW_WIDTH - (WINDOW_WIDTH * 0.3f);
+
+                // Ne dozvoljavamo da ode levo od pocetka zgrade
+                if (personX < buildingStart) personX = buildingStart;
             }
             if (key == GLFW_KEY_W) { // Desno
                 personX += moveSpeed;
@@ -446,6 +534,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
                         liftState = IDLE;
                         for (int i = 0; i < 8; i++) floorRequests[i] = false;
                         for (auto& bb : buttons) bb.isPressed = false;
+                        liftState = DOOR_OPENING;
                     }
                     else if (b.actionType == 4) { // VENTILACIJA
                         // Samo menjamo bool vrednost, kursor sredjujemo u main-u
@@ -487,12 +576,19 @@ int main()
     unsigned int basicShader = createShader("basic.vert", "basic.frag");
     unsigned int textureShader = createShader("texture.vert", "texture.frag");
 
+    // --- UCITAVANJE SLIKA ---
     buildingTexture = loadTexture("building.png");
     liftTexture = loadTexture("elevator.png");
-    fanTexture = loadTexture("fan.png");
+
+    // Ucitavamo CRNI i OBOJENI ventilator
+    fanTexture = loadTexture("fan.png");           // Crni
+    unsigned int fanColorTexture = loadTexture("fan_color.png"); // <--- OBOJENI (Moraš imati ovu sliku!)
+
+    personTexture = loadTexture("girl.png");
 
     int dummyComp;
     stbi_info("elevator.png", &liftImgWidth, &liftImgHeight, &dummyComp);
+    stbi_info("girl.png", &personImgWidth, &personImgHeight, &dummyComp);
 
     // --- BAFERI ---
     float rectVertices[] = { 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
@@ -569,6 +665,9 @@ int main()
 
     bool firstLoop = true;
 
+    // UVEK SAKRIVAMO SISTEMSKI KURSOR JER IMAMO SVOJ
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+
     while (!glfwWindowShouldClose(window))
     {
         glfwGetFramebufferSize(window, &width, &height);
@@ -599,13 +698,34 @@ int main()
             firstLoop = false;
         }
 
+        // ... unutar int main(), u while petlji, nakon updateApp() i glfwPollEvents() ...
+
         updateApp();
         glfwPollEvents();
 
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        // --- IZMJENA POZADINE (NEBO) ---
+        // Umesto bele (1,1,1), stavljamo svetlo plavu za nebo
+        glClearColor(0.7f, 0.9f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // 1. PANEL
+        // --- NOVO: CRTANJE ASFALTA NA DNU ---
+        // Ovo crtamo PRVO, da bi sve ostalo (zgrada, panel) islo PREKO asfalta.
+        glUseProgram(basicShader);
+        glBindVertexArray(VAO_Rect);
+        glUniform1i(uIsLineLoc, 0); // Ispunjeni kvadrat
+
+        // Boja asfalta (tamno siva)
+        glUniform4f(uColorLoc, 0.25f, 0.25f, 0.28f, 1.0f);
+
+        // Visina asfalta je 5% visine prozora
+        float asphaltHeight = WINDOW_HEIGHT * 0.05f;
+
+        // Crtamo pravougaonik od dna (y=0), preko cele sirine
+        glUniform4f(uRectLoc, 0.0f, 0.0f, WINDOW_WIDTH, asphaltHeight);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+
+
+        // 1. PANEL (Ovaj deo koda vec imas, samo se nastavlja ispod)
         glUseProgram(basicShader);
         glBindVertexArray(VAO_Rect);
         glUniform1i(uIsLineLoc, 0);
@@ -613,38 +733,25 @@ int main()
         glUniform4f(uRectLoc, 0, 0, PANEL_WIDTH, WINDOW_HEIGHT);
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
+        // ... nastavak koda za dugmad, zgradu itd ...
+
         // 2. DUGMAD
         for (auto& b : buttons) {
-
-            // OVO JE NOVO: Sinhronizujemo izgled dugmeta sa logikom zahteva
             if (b.actionType == 0) {
                 b.isPressed = floorRequests[b.floorIndex];
             }
 
-            // A) POZADINA DUGMETA
-            //glUseProgram(basicShader);
-            //glBindVertexArray(VAO_Rect);
-            //glUniform1i(uIsLineLoc, 0);
-
-            //if (b.actionType == 4 && ventilationOn) glUniform4f(uColorLoc, 0.0f, 0.8f, 0.8f, 1.0f);
-            //else glUniform4f(uColorLoc, 0.4f, 0.4f, 0.45f, 1.0f);
-
-            //glUniform4f(uRectLoc, b.x, b.y, b.w, b.h);
-            //glDrawArrays(GL_TRIANGLES, 0, 6);
-
+            // POZADINA
             glUseProgram(basicShader);
             glBindVertexArray(VAO_Rect);
             glUniform1i(uIsLineLoc, 0);
-
             if (b.actionType == 4 && ventilationOn) glUniform4f(uColorLoc, 0.0f, 0.8f, 0.8f, 1.0f);
-            else glUniform4f(uColorLoc, 0.4f, 0.4f, 0.45f, 1.0f); // Uvek siva pozadina za spratove
-
+            else glUniform4f(uColorLoc, 0.4f, 0.4f, 0.45f, 1.0f);
             glUniform4f(uRectLoc, b.x, b.y, b.w, b.h);
             glDrawArrays(GL_TRIANGLES, 0, 6);
 
-            // --- IZMENA 2: OKVIR (Beli ili Crni) ---
+            // OKVIR
             std::vector<float> outline;
-            // ... (kod za punjenje vektora outline sa 4 linije oko dugmeta) ...
             outline.push_back(b.x); outline.push_back(b.y);
             outline.push_back(b.x + b.w); outline.push_back(b.y);
             outline.push_back(b.x + b.w); outline.push_back(b.y);
@@ -659,55 +766,22 @@ int main()
             glBufferData(GL_ARRAY_BUFFER, outline.size() * sizeof(float), outline.data(), GL_DYNAMIC_DRAW);
             glUniform1i(uIsLineLoc, 1);
 
-            // AKO JE AKTIVNO -> BELA BOJA, INAÈE CRNA
             if (b.isPressed && b.actionType == 0) {
-                glUniform4f(uColorLoc, 1.0f, 1.0f, 1.0f, 1.0f); // BELA
-                glLineWidth(2.0f); // Deblji okvir
+                glUniform4f(uColorLoc, 1.0f, 1.0f, 1.0f, 1.0f);
+                glLineWidth(2.0f);
             }
             else {
-                glUniform4f(uColorLoc, 0.0f, 0.0f, 0.0f, 1.0f); // CRNA
+                glUniform4f(uColorLoc, 0.0f, 0.0f, 0.0f, 1.0f);
                 glLineWidth(1.0f);
             }
             glDrawArrays(GL_LINES, 0, (GLsizei)outline.size() / 2);
 
-            // B) OKVIR DUGMETA
-            outline.push_back(b.x); outline.push_back(b.y);
-            outline.push_back(b.x + b.w); outline.push_back(b.y);
-
-            outline.push_back(b.x + b.w); outline.push_back(b.y);
-            outline.push_back(b.x + b.w); outline.push_back(b.y + b.h);
-
-            outline.push_back(b.x + b.w); outline.push_back(b.y + b.h);
-            outline.push_back(b.x); outline.push_back(b.y + b.h);
-
-            outline.push_back(b.x); outline.push_back(b.y + b.h);
-            outline.push_back(b.x); outline.push_back(b.y);
-
-            glBindVertexArray(VAO_Line);
-            glBindBuffer(GL_ARRAY_BUFFER, VBO_Line);
-            glBufferData(GL_ARRAY_BUFFER, outline.size() * sizeof(float), outline.data(), GL_DYNAMIC_DRAW);
-            glUniform1i(uIsLineLoc, 1);
-
-            // Ako je pritisnuto -> BELI OKVIR
-            if (b.isPressed && b.actionType == 0) {
-                glUniform4f(uColorLoc, 1.0f, 1.0f, 1.0f, 1.0f); // BELA
-                glLineWidth(2.0f); // Malo deblje
-            }
-            else {
-                // Ako nije -> CRNI OKVIR
-                glUniform4f(uColorLoc, 0.0f, 0.0f, 0.0f, 1.0f); // CRNA
-                glLineWidth(1.0f);
-            }
-            glDrawArrays(GL_LINES, 0, (GLsizei)outline.size() / 2);
-
-            // C) UNUTRASNJOST (Mali kvadrat unutra za lepsi izgled)
+            // UNUTRASNJOST
             glUseProgram(basicShader);
             glBindVertexArray(VAO_Rect);
             glUniform1i(uIsLineLoc, 0);
-
             if (b.actionType == 4 && ventilationOn) glUniform4f(uColorLoc, 0.0f, 0.8f, 0.8f, 1.0f);
             else glUniform4f(uColorLoc, 0.4f, 0.4f, 0.45f, 1.0f);
-
             glUniform4f(uRectLoc, b.x + 2, b.y + 2, b.w - 4, b.h - 4);
             glDrawArrays(GL_TRIANGLES, 0, 6);
         }
@@ -729,38 +803,47 @@ int main()
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, liftTexture);
 
-        // Racunamo dimenzije lifta preko helper funkcije
         float liftX, liftW;
         getLiftDimensions(liftX, liftW);
-
-        // Visina je 90% visine sprata
         float liftH = fh * 0.9f;
 
         glUniform4f(uTexRectLoc, liftX, liftY, liftW, liftH);
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
         // 5. OSOBA
-        glUseProgram(basicShader);
-        glBindVertexArray(VAO_Rect);
+        glUseProgram(textureShader);
+        glBindVertexArray(VAO_Tex);
 
+        float personH = fh * 0.6f;
+        float personW = 30.0f;
+
+        if (personImgHeight > 0) {
+            float ar = (float)personImgWidth / (float)personImgHeight;
+            personW = personH * ar;
+        }
+
+        float pDrawX, pDrawY;
         if (personInLift) {
-            glUniform4f(uColorLoc, 0.0f, 1.0f, 0.0f, 1.0f);
-            // Osoba je u sredini lifta
-            glUniform4f(uRectLoc, liftX + liftW / 2 - 15, liftY + 5, 30, fh * 0.6f);
+            pDrawX = liftX + liftW / 2 - personW / 2;
+            pDrawY = liftY + 5;
         }
         else {
-            glUniform4f(uColorLoc, 1.0f, 0.2f, 0.2f, 1.0f);
-            glUniform4f(uRectLoc, personX, personY, 30, fh * 0.6f);
+            pDrawX = personX;
+            pDrawY = personY;
         }
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, personTexture);
+        glUniform4f(uTexRectLoc, pDrawX, pDrawY, personW, personH);
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
-        // 6. VRATA (Plavi pravougaonik) - Manja i centrirana
-        // Ne menjamo boju vrata
+        // 6. VRATA
+        glUseProgram(basicShader);
+        glBindVertexArray(VAO_Rect);
+        glUniform1i(uIsLineLoc, 0);
 
-        // Crtamo vrata samo ako nisu skroz otvorena da bi se videla osoba kad su otvorena?
-        // Ne, vrata se dizu, pa se osoba vidi ispod njih.
+        glUniform4f(uColorLoc, 0.4f, 0.8f, 1.0f, 1.0f); // Plava boja
 
-        glUniform4f(uColorLoc, 0.4f, 0.8f, 1.0f, 1.0f);
         float doorRectW = liftW * 0.4f;
         float doorRectH = fh * 0.7f;
         float doorRectX = liftX + (liftW - doorRectW) / 2.0f;
@@ -772,6 +855,7 @@ int main()
         // 7. LINIJE I TEKST
         std::vector<float> lines;
 
+        // A) Linije za spratove
         for (int i = 0; i < 8; i++) {
             float y = i * fh;
             float tx = buildingX - 30;
@@ -779,6 +863,7 @@ int main()
             for (char c : floorNames[i]) { appendChar(lines, c, tx, ty, fh * 0.08f); tx += fh * 0.13f; }
         }
 
+        // B) Tekst na dugmadima
         for (auto& b : buttons) {
             float charSize = b.h * 0.15f;
             float textLen = b.label.length() * (charSize + 6.0f);
@@ -786,87 +871,109 @@ int main()
             float ty = b.y + (b.h / 2) - 5;
             for (char c : b.label) { appendChar(lines, c, tx, ty, charSize); tx += 8.0f; }
         }
+        // --- C) IME I PREZIME (ISPRAVLJENO POZICIONIRANJE) ---
+        std::string ime = "IVANA RADOVANOVIC";   // Upisi svoje
+        std::string indeks = "SV 23/2022"; // Upisi svoj indeks
 
-        if (ventilationOn) {
-            double cx, cy; glfwGetCursorPos(window, &cx, &cy);
-            float mx = (float)cx; float my = WINDOW_HEIGHT - (float)cy;
-            float angle = (float)glfwGetTime() * 8.0f;
-            float s = sin(angle) * 20, c = cos(angle) * 20;
-            lines.push_back(mx - c); lines.push_back(my - s);
-            lines.push_back(mx + c); lines.push_back(my + s);
-            lines.push_back(mx - s); lines.push_back(my + c);
-            lines.push_back(mx + s); lines.push_back(my - c);
+        float nameScale = 12.0f;     // Smanjili smo velicinu slova (bilo 15)
+        float letterSpacing = 18.0f; // Povecali razmak izmedju slova (bilo 10/12)
+
+        // 1. CRTANJE IMENA
+        // Centriranje: Sredina panela - Polovina ukupne duzine teksta
+        float nameX = (PANEL_WIDTH / 2.0f) - ((ime.length() * letterSpacing) / 2.0f);
+        float nameY = WINDOW_HEIGHT * 0.15f; // Visina od dna
+
+        for (char c : ime) {
+            appendChar(lines, c, nameX, nameY, nameScale);
+            nameX += letterSpacing; // Pomeramo se za sledece slovo
         }
 
+        // 2. CRTANJE INDEKSA
+        float indX = (PANEL_WIDTH / 2.0f) - ((indeks.length() * letterSpacing) / 2.0f);
+        // Spustamo indeks nize (40px razmak da se ne sudare redovi)
+        float indY = nameY - 40.0f;
+
+        for (char c : indeks) {
+            appendChar(lines, c, indX, indY, nameScale);
+            indX += letterSpacing;
+        }
+   
+        // --------------------------------------------------------
+
+        // D) KONACNO CRTANJE SVIH LINIJA
         glBindVertexArray(VAO_Line);
         glBindBuffer(GL_ARRAY_BUFFER, VBO_Line);
+        // Sada saljemo SVE podatke (spratovi + dugmad + ime)
         glBufferData(GL_ARRAY_BUFFER, lines.size() * sizeof(float), lines.data(), GL_DYNAMIC_DRAW);
+
         glUniform1i(uIsLineLoc, 1);
-        glUniform4f(uColorLoc, 0.0f, 0.0f, 0.0f, 1.0f);
+        glUniform4f(uColorLoc, 0.0f, 0.0f, 0.0f, 1.0f); // Crna boja teksta
         glDrawArrays(GL_LINES, 0, (GLsizei)lines.size() / 2);
 
+        // 8. VENTILATOR KAO KURSOR (UVEK VIDLJIV)
+
+                // 1. SAKRIVANJE SISTEMSKOG KURSORA (Strelica se ne vidi)
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+
+        // 2. PRIPREMA ZA CRTANJE (Uvek crtamo, bez obzira na ventilaciju)
+        glUseProgram(textureShader);
+        glBindVertexArray(VAO_Fan);
+
+        double cx, cy; glfwGetCursorPos(window, &cx, &cy);
+        float mx = (float)cx;
+        float my = WINDOW_HEIGHT - (float)cy;
+
+        // --- LOGIKA STANJA ---
+        unsigned int textureToUse;
+        float angle;
+
+        // Ako je ventilacija UPALJENA
         if (ventilationOn) {
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+            textureToUse = fanColorTexture;       // Koristi sliku U BOJI
+            angle = (float)glfwGetTime() * 15.0f; // ROTIRAJ SE
         }
+        // Ako je ventilacija UGASENA
         else {
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            textureToUse = fanTexture;            // Koristi CRNU sliku
+            angle = 0.0f;                         // MIRUJ (Nema rotacije)
         }
 
-        // 8. VENTILATOR KAO KURSOR (SLIKA)
-        if (ventilationOn) {
-            glUseProgram(textureShader);
-            // !! BITNO: Koristimo NOVI VAO_Fan, tako da NE diramo VAO_Tex koji koristi zgrada
-            glBindVertexArray(VAO_Fan);
+        // --- MATEMATIKA ROTACIJE (Isto kao pre) ---
+        float s = sin(angle);
+        float c = cos(angle);
+        float size = 50.0f;
+        float halfS = size / 2.0f;
 
-            double cx, cy; glfwGetCursorPos(window, &cx, &cy);
-            float mx = (float)cx;
-            float my = WINDOW_HEIGHT - (float)cy;
+        float p1x = -halfS, p1y = -halfS;
+        float p2x = halfS, p2y = -halfS;
+        float p3x = halfS, p3y = halfS;
+        float p4x = -halfS, p4y = halfS;
 
-            float angle = (float)glfwGetTime() * 10.0f;
-            float s = sin(angle);
-            float c = cos(angle);
+        float r1x = p1x * c - p1y * s; float r1y = p1x * s + p1y * c;
+        float r2x = p2x * c - p2y * s; float r2y = p2x * s + p2y * c;
+        float r3x = p3x * c - p3y * s; float r3y = p3x * s + p3y * c;
+        float r4x = p4x * c - p4y * s; float r4y = p4x * s + p4y * c;
 
-            float size = 50.0f;
-            float halfS = size / 2.0f;
+        float finalVertices[] = {
+            mx + r1x, my + r1y,  0.0f, 0.0f,
+            mx + r2x, my + r2y,  1.0f, 0.0f,
+            mx + r3x, my + r3y,  1.0f, 1.0f,
 
-            float p1x = -halfS, p1y = -halfS;
-            float p2x = halfS, p2y = -halfS;
-            float p3x = halfS, p3y = halfS;
-            float p4x = -halfS, p4y = halfS;
+            mx + r1x, my + r1y,  0.0f, 0.0f,
+            mx + r3x, my + r3y,  1.0f, 1.0f,
+            mx + r4x, my + r4y,  0.0f, 1.0f
+        };
 
-            float r1x = p1x * c - p1y * s; float r1y = p1x * s + p1y * c;
-            float r2x = p2x * c - p2y * s; float r2y = p2x * s + p2y * c;
-            float r3x = p3x * c - p3y * s; float r3y = p3x * s + p3y * c;
-            float r4x = p4x * c - p4y * s; float r4y = p4x * s + p4y * c;
+        // Slanje podataka
+        glBindBuffer(GL_ARRAY_BUFFER, VBO_Fan);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(finalVertices), finalVertices, GL_DYNAMIC_DRAW);
 
-            float finalVertices[] = {
-                mx + r1x, my + r1y,  0.0f, 0.0f,
-                mx + r2x, my + r2y,  1.0f, 0.0f,
-                mx + r3x, my + r3y,  1.0f, 1.0f,
+        // Aktiviranje odabrane teksture (Crne ili Obojene)
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, textureToUse);
 
-                mx + r1x, my + r1y,  0.0f, 0.0f,
-                mx + r3x, my + r3y,  1.0f, 1.0f,
-                mx + r4x, my + r4y,  0.0f, 1.0f
-            };
-
-            // Ovde sada punimo VBO_Fan, a ne VBO_Tex!
-            glBindBuffer(GL_ARRAY_BUFFER, VBO_Fan);
-            glBufferData(GL_ARRAY_BUFFER, sizeof(finalVertices), finalVertices, GL_DYNAMIC_DRAW);
-
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, fanTexture);
-
-            glUniform4f(uTexRectLoc, 0.0f, 0.0f, 1.0f, 1.0f);
-            glDrawArrays(GL_TRIANGLES, 0, 6);
-        }
-
-        // KONTROLA KURSORA
-        if (ventilationOn) {
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-        }
-        else {
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-        }
+        glUniform4f(uTexRectLoc, 0.0f, 0.0f, 1.0f, 1.0f);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
 
         glfwSwapBuffers(window);
     }
