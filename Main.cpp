@@ -75,12 +75,11 @@ float getFloorH() { return WINDOW_HEIGHT / 8.0f; }
 
 // Vraca X koordinatu i Sirinu lifta (ZALEPLJEN DESNO + PROPORCIONALAN)
 void getLiftDimensions(float& outX, float& outW) {
-    // 1. Racunamo visinu lifta (isto kao u updateApp)
+    // 1. Racunamo visinu lifta
     float fh = getFloorH();
     float liftH = fh * 0.9f;
 
-    // 2. Racunamo sirinu na osnovu originalne slike (da se ne deformise)
-    // (liftImgWidth i liftImgHeight su one globalne promenljive koje smo napunili pri ucitavanju)
+    // 2. Racunamo sirinu na osnovu originalne slike 
     if (liftImgHeight > 0) {
         float aspectRatio = (float)liftImgWidth / (float)liftImgHeight;
         outW = liftH * aspectRatio;
@@ -238,6 +237,7 @@ void initLogic() {
             buttons.push_back(b);
         }
     }
+
     // --- SPECIJALNI TASTERI ---
     float specStartY = WINDOW_HEIGHT * 0.3f;
     std::string specs[] = { "OTVORI", "ZATVORI", "STOP", "VENT" };
@@ -263,11 +263,11 @@ void initLogic() {
         liftY = 2 * floorHeight;
         personY = 1 * floorHeight;
 
-        // IZMJENA: Racunamo gde pocinje zgrada (30% sirine s desna)
+        //  Racunamo gde pocinje zgrada (30% sirine s desna)
         float buildingWidth = WINDOW_WIDTH * 0.3f;
         float buildingStart = WINDOW_WIDTH - buildingWidth;
 
-        personX = buildingStart; // <--- Krece tacno od leve ivice zgrade
+        personX = buildingStart; //  Krece tacno od leve ivice zgrade
 
         personInLift = false;
         firstRun = false;
