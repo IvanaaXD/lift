@@ -1,0 +1,18 @@
+# Visual Studio privremeni fajlovi
+.vs/
+x64/
+Debug/
+Release/
+*.user
+*.suo
+*.opensdf
+*.sdf
+*.db
+*.opendsb
+
+# Build fajlovi (ako ih ima van foldera)
+*.obj
+*.exe
+*.pdb
+*.ilk
+*.aps
